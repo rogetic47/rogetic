@@ -65,7 +65,6 @@
 
         .interactive-panel { width: 380px; background: var(--bg-card); border-left: 1px solid var(--border-wood); padding: 1.2rem; display: flex; flex-direction: column; gap: 1rem; align-items: center; }
 
-        /* TAULER UNICODE SENSE IMATGES EXTERNES */
         .board-wrapper { width: 100%; max-width: 330px; aspect-ratio: 1; border: 3px solid var(--accent-gold); border-radius: 8px; overflow: hidden; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         .sq { display: flex; align-items: center; justify-content: center; font-size: 2.2rem; cursor: pointer; user-select: none; line-height: 1; }
         .sq.light { background-color: var(--sq-light); color: #1a120b; }
@@ -99,9 +98,9 @@
             </div>
 
             <div class="api-card">
-                <div class="section-title" style="margin-bottom:4px;"><i class="fa-solid fa-key"></i> Clau API OpenAI (IA Real)</div>
-                <p style="font-size: 0.75rem; color: var(--text-muted);">Introdueix la teva API Key d'OpenAI (`sk-...`) per tenir la IA completa sense límit de preguntes.</p>
-                <input type="password" id="apiKeyInput" placeholder="sk-..." onchange="saveApiKey()">
+                <div class="section-title" style="margin-bottom:4px;"><i class="fa-solid fa-key"></i> Clau API OpenAI (Opcional)</div>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Si tens una clau real d'OpenAI, engantxa-la aquí. Si la deixes en blanc, la web utilitzarà el motor de cerca d'escacs integrat.</p>
+                <input type="password" id="apiKeyInput" placeholder="Clau secreta d'OpenAI..." onchange="saveApiKey()">
             </div>
         </aside>
 
@@ -117,7 +116,7 @@
             </div>
 
             <div class="chat-input-area">
-                <textarea id="userInput" placeholder="Escriu la teva consulta (ex: Gambit de Dama, Siciliana, Lucena...)" onkeydown="handleKeyDown(event)"></textarea>
+                <textarea id="userInput" placeholder="Escriu la teva consulta (ex: gambito de dama pgn, siciliana, lucena...)" onkeydown="handleKeyDown(event)"></textarea>
                 <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </main>
@@ -211,8 +210,12 @@
             const apiKey = localStorage.getItem('chess_ai_apikey');
             let responseText = "";
 
-            if (apiKey) {
+            // NOU FALLBACK: Si no hi ha clau o conté "sk-...", fa servir el cercador local
+            if (apiKey && apiKey.length > 20 && !apiKey.includes('sk-...')) {
                 responseText = await fetchOpenAIResponse(text, apiKey);
+                if (responseText.includes('Error d\'API') || responseText.includes('Error de connexió')) {
+                    responseText = generateSimulatedResponse(text);
+                }
             } else {
                 responseText = generateSimulatedResponse(text);
             }
@@ -251,7 +254,9 @@
         function saveApiKey() {
             const key = document.getElementById('apiKeyInput').value.trim();
             localStorage.setItem('chess_ai_apikey', key);
-            if (key) alert("Clau API guardada! Ara la IA utilitza el model d'OpenAI complet.");
+            if (key && !key.includes('sk-...')) {
+                alert("Clau API guardada!");
+            }
         }
 
         function generateSimulatedResponse(prompt) {
@@ -260,10 +265,10 @@
             if (p.includes('gambito') || p.includes('gambit') || p.includes('dama')) {
                 loadFenToBoard('rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq c3 0 2');
                 return `
-                    <p><strong>El Gambit de Dama (1.d4 d5 2.c4)</strong> és una de les obertures més antigues i prestigioses de la historia dels escacs.</p>
-                    <p>Les blanques ofereixen un peó lateral (el de c4) per aconseguir el control del centre amb 3.e4 o 3.Nc3. Si les negres ho accepten (<em>Gambit de Dama Acceptat</em>) amb 2...dxc4, les blanques solen recuperar el peó fàcilment.</p>
+                    <p><strong>El Gambit de Dama (1.d4 d5 2.c4)</strong> és una de les obertures més sòlides i populars de la historia dels escacs.</p>
+                    <p>Les blanques ofereixen un peó temporalment per controlar el centre de les caselles e4 i d4.</p>
                     <div class="chess-card-embed">
-                        <div class="pgn-box">1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 (Gambit de Dama Rehusat)</div>
+                        <div class="pgn-box">[Event "Gambit de Dama - Linia Principal"]\n1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 b6</div>
                         <a href="https://lichess.org/opening/Queens_Gambit" target="_blank" class="resource-link"><i class="fa-solid fa-up-right-from-square"></i> Estudiar Gambit de Dama a Lichess</a>
                     </div>
                 `;
@@ -274,7 +279,7 @@
                 return `
                     <p><strong>La Defensa Siciliana (1.e4 c5)</strong> és la resposta més agressiva contra 1.e4. La <strong>Variant Najdorf (5...a6)</strong> busca el control de b5 i prepara l'expansió al flanc de dama.</p>
                     <div class="chess-card-embed">
-                        <div class="pgn-box">1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6</div>
+                        <div class="pgn-box">[Event "Defensa Siciliana Najdorf"]\n1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6</div>
                         <a href="https://lichess.org/opening/Sicilian_Defense_Najdorf_Variation" target="_blank" class="resource-link"><i class="fa-solid fa-up-right-from-square"></i> Estudiar Najdorf a Lichess</a>
                     </div>
                 `;
@@ -283,13 +288,12 @@
             if (p.includes('zugzwang')) {
                 loadFenToBoard('8/8/8/4k3/8/4K3/4P3/8 w - - 0 1');
                 return `
-                    <p><strong>El Zugzwang</strong> és quan qualsevol moviment legal empitjora la teva posició. És vital en finals de peons per forçar el rei rival a cedir espai.</p>
+                    <p><strong>El Zugzwang</strong> és quan qualsevol moviment legal empitjora la teva posició. És un concepte vital en els finals de peons.</p>
                 `;
             }
 
             return `
-                <p>Com a IA d'escacs, puc explicar-te qualsevol obertura (Gambit de Dama, Siciliana, Italiana), finals o tàctiques.</p>
-                <p><i>Pots enganxar la teva API Key d'OpenAI al menú de l'esquerra per tenir la IA completa en viu!</i></p>
+                <p>Com a assistent de Gran Mestre, puc mostrar-te PGNs i obertures com el <strong>Gambit de Dama</strong>, la <strong>Defensa Siciliana</strong> o la <strong>Posició de Lucena</strong>.</p>
             `;
         }
 
@@ -301,7 +305,7 @@
                     body: JSON.stringify({
                         model: "gpt-4o-mini",
                         messages: [
-                            { role: "system", content: "Ets un Gran Mestre d'Escacs i assistent virtual creat per Roger Márquez Sabatés. Respon en català o en l'idioma de l'usuari. Utilitza etiquetes HTML com <p>, <strong>, <em> i blocs <div class='pgn-box'> per a PGNs." },
+                            { role: "system", content: "Ets un Gran Mestre d'Escacs i assistent virtual creat per Roger Márquez Sabaté. Respon en català o en l'idioma de l'usuari. Utilitza etiquetes HTML com <p>, <strong>, <em> i blocs <div class='pgn-box'> per a PGNs." },
                             { role: "user", content: userPrompt }
                         ]
                     })

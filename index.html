@@ -9,17 +9,18 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --accent-blue: #3b82f6;
-            --accent-purple: #8b5cf6;
-            --accent-amber: #f59e0b;
-            --square-light: #e2e8f0;
-            --square-dark: #475569;
-            --square-highlight: #fef08a;
-            --square-move: #86efac;
+            --bg-dark: #120d0a;
+            --card-bg: #1c1511;
+            --accent-gold: #d4af37;
+            --accent-gold-hover: #f3e5ab;
+            --border-wood: #3d2817;
+            --square-light: #f0d9b5;
+            --square-dark: #b58863;
+            --square-highlight: rgba(255, 235, 59, 0.6);
+            --square-move: rgba(76, 175, 80, 0.5);
             --text-light: #f8fafc;
-            --text-dim: #94a3b8;
+            --text-gold: #e2b714;
+            --text-dim: #a89f91;
         }
 
         * {
@@ -29,34 +30,49 @@
             user-select: none;
         }
 
+        /* Cursor temàtic d'escacs */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Georgia', 'Segoe UI', serif;
             background-color: var(--bg-dark);
+            /* Patró fons estil taulell fons fosc */
+            background-image: 
+                linear-gradient(45deg, #18110d 25%, transparent 25%), 
+                linear-gradient(-45deg, #18110d 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #18110d 75%), 
+                linear-gradient(-45deg, transparent 75%, #18110d 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
             color: var(--text-light);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23d4af37"><text x="2" y="18" font-size="20">♟</text></svg>'), auto;
+        }
+
+        button, .square, select, label {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23f3e5ab"><text x="2" y="18" font-size="20">♛</text></svg>'), pointer !important;
         }
 
         header {
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(28, 21, 17, 0.95);
             backdrop-filter: blur(10px);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #334155;
+            border-bottom: 2px solid var(--border-wood);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: bold;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text-gold);
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
         .main-container {
@@ -78,31 +94,32 @@
 
         .card {
             background-color: var(--card-bg);
-            border: 1px solid #334155;
-            border-radius: 12px;
+            border: 2px solid var(--border-wood);
+            border-radius: 10px;
             padding: 1.25rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
         }
 
         .card h2 {
             font-size: 1.1rem;
             margin-bottom: 1rem;
-            color: #cbd5e1;
+            color: var(--text-gold);
             display: flex;
             align-items: center;
             gap: 8px;
+            border-bottom: 1px solid var(--border-wood);
+            padding-bottom: 8px;
         }
 
         .mode-btn {
             width: 100%;
             padding: 0.8rem 1rem;
             margin-bottom: 0.6rem;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 8px;
+            background: #120d0a;
+            border: 1px solid var(--border-wood);
+            border-radius: 6px;
             color: var(--text-light);
             text-align: left;
-            cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
@@ -114,18 +131,20 @@
             font-size: 1.2rem;
             width: 24px;
             text-align: center;
+            color: var(--accent-gold);
         }
 
         .mode-btn:hover {
-            border-color: var(--accent-blue);
-            background: #1e293b;
+            border-color: var(--accent-gold);
+            background: #251b14;
         }
 
         .mode-btn.active {
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            border-color: transparent;
+            background: linear-gradient(135deg, #5c3a21, #2b1a0e);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold-hover);
             font-weight: bold;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.3);
         }
 
         .board-section {
@@ -138,26 +157,30 @@
         }
 
         .status-banner {
-            background: #1e293b;
-            padding: 0.75rem 1.5rem;
+            background: var(--card-bg);
+            padding: 0.75rem 2rem;
             border-radius: 30px;
-            border: 1px solid #334155;
-            font-size: 1rem;
+            border: 2px solid var(--border-wood);
+            font-size: 1.1rem;
             font-weight: 600;
+            color: var(--text-gold);
             display: flex;
             align-items: center;
             gap: 10px;
             min-height: 48px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
+        /* Marc de fusta realista per al tauler */
         .board-wrapper {
             position: relative;
             width: 560px;
             height: 560px;
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.5);
-            border: 6px solid #334155;
+            padding: 12px;
+            background: linear-gradient(135deg, #4a301a, #26170c);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.9);
+            border: 4px solid var(--accent-gold);
         }
 
         .chessboard {
@@ -166,6 +189,7 @@
             grid-template-rows: repeat(8, 1fr);
             width: 100%;
             height: 100%;
+            border: 2px solid #1a1008;
         }
 
         .square {
@@ -173,22 +197,28 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 3rem;
-            cursor: pointer;
+            font-size: 3.2rem;
             transition: background-color 0.15s;
         }
 
-        .square.light { background-color: var(--square-light); }
-        .square.dark { background-color: var(--square-dark); }
+        .square.light { 
+            background-color: var(--square-light); 
+            color: #2b1a0e;
+        }
+        .square.dark { 
+            background-color: var(--square-dark); 
+            color: #f0d9b5;
+        }
 
         .square.selected { background-color: var(--square-highlight) !important; }
         .square.valid-move::after {
             content: '';
             position: absolute;
-            width: 18px;
-            height: 18px;
-            background-color: rgba(34, 197, 94, 0.7);
+            width: 20px;
+            height: 20px;
+            background-color: rgba(46, 125, 50, 0.8);
             border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
         .square.valid-capture::after {
@@ -196,13 +226,13 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            border: 4px solid rgba(239, 68, 68, 0.7);
+            border: 4px dashed rgba(198, 40, 40, 0.8);
             box-sizing: border-box;
         }
 
         .square.fogged {
-            background-color: #090d16 !important;
-            cursor: not-allowed;
+            background-color: #0b0806 !important;
+            cursor: not-allowed !important;
         }
         .square.fogged * {
             display: none !important;
@@ -212,24 +242,24 @@
             animation: portalPulse 2s infinite alternate;
         }
         @keyframes portalPulse {
-            0% { box-shadow: inset 0 0 15px #a855f7; }
-            100% { box-shadow: inset 0 0 25px #3b82f6; }
+            0% { box-shadow: inset 0 0 15px #d4af37; }
+            100% { box-shadow: inset 0 0 25px #ff6b6b; }
         }
 
         .piece {
             z-index: 2;
             transition: transform 0.1s ease;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
         }
 
         .piece.white-piece {
             color: #ffffff;
-            text-shadow: 0 0 2px #000, 0 0 4px #000;
+            text-shadow: 0 0 2px #000, 0 0 5px rgba(0,0,0,0.8);
         }
 
         .piece.black-piece {
-            color: #111827;
-            text-shadow: 0 0 1px #fff;
+            color: #1a120b;
+            text-shadow: 0 0 2px #fff;
         }
 
         .piece.blindfold {
@@ -251,40 +281,49 @@
         .btn-action {
             flex: 1;
             padding: 0.75rem;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
+            background: linear-gradient(135deg, #8c5a2b, #4a2e15);
+            color: var(--accent-gold-hover);
+            border: 1px solid var(--accent-gold);
+            border-radius: 6px;
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
-        .btn-action:hover { background-color: #2563eb; }
-        .btn-danger { background-color: #ef4444; }
-        .btn-danger:hover { background-color: #dc2626; }
+        .btn-action:hover { 
+            background: linear-gradient(135deg, #a36a33, #5c3a1b); 
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-danger { 
+            background: linear-gradient(135deg, #8b0000, #4a0000); 
+            border-color: #ff4d4d;
+            color: #ffcccc;
+        }
+        .btn-danger:hover { 
+            background: linear-gradient(135deg, #a60000, #5c0000); 
+        }
 
         .move-history {
             flex: 1;
             max-height: 380px;
             overflow-y: auto;
-            font-family: monospace;
-            font-size: 0.9rem;
-            color: #cbd5e1;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            color: #d1c7bd;
         }
 
         .move-row {
             display: flex;
             padding: 0.4rem 0.6rem;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid var(--border-wood);
         }
 
-        .move-row:nth-child(even) { background-color: rgba(0,0,0,0.15); }
-        .move-num { width: 40px; color: var(--text-dim); }
+        .move-row:nth-child(even) { background-color: rgba(0,0,0,0.2); }
+        .move-num { width: 40px; color: var(--accent-gold); }
         .move-white, .move-black { flex: 1; }
 
         .event-toast {
@@ -292,16 +331,17 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #f59e0b, #ef4444);
-            color: white;
+            background: linear-gradient(135deg, #d4af37, #8c5a2b);
+            color: #1a0f00;
             padding: 0.6rem 1.2rem;
             border-radius: 20px;
             font-weight: bold;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
             opacity: 0;
             transition: opacity 0.3s, transform 0.3s;
             pointer-events: none;
             z-index: 10;
+            border: 1px solid #fff;
         }
 
         .event-toast.show {
@@ -310,14 +350,15 @@
         }
 
         select {
-            background: #0f172a;
-            color: white;
-            border: 1px solid #334155;
-            padding: 6px 10px;
+            background: #120d0a;
+            color: var(--accent-gold);
+            border: 1px solid var(--border-wood);
+            padding: 8px 10px;
             border-radius: 6px;
             font-size: 0.9rem;
             width: 100%;
             margin-top: 8px;
+            outline: none;
         }
 
         @media (max-width: 1100px) {
@@ -336,11 +377,11 @@
 
     <header>
         <div class="logo">
-            <i class="fa-solid fa-chess-queen"></i>
+            <i class="fa-solid fa-chess-king"></i>
             <span>Rogetic Chess Lab</span>
         </div>
-        <div style="color: var(--text-dim); font-size: 0.9rem;">
-            Experiència d'escacs única i personalitzada
+        <div style="color: var(--text-dim); font-size: 0.9rem; font-style: italic;">
+            Taulell clàssic d'alta precisió
         </div>
     </header>
 
@@ -348,53 +389,53 @@
         <!-- Sidebar Modes -->
         <div class="sidebar">
             <div class="card">
-                <h2><i class="fa-solid fa-gamepad"></i> Selecciona Mode</h2>
+                <h2><i class="fa-solid fa-chess-board"></i> Modalitat de Joc</h2>
                 <button class="mode-btn active" onclick="setMode('classic')">
-                    <i class="fa-solid fa-chess" style="color: #60a5fa;"></i>
+                    <i class="fa-solid fa-chess"></i>
                     <div>
                         <strong>Escacs Clàssics</strong>
-                        <div style="font-size: 0.75rem; color: #94a3b8;">Regles estàndard 1v1 o vs Bot</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">Regles tradicionals</div>
                     </div>
                 </button>
                 <button class="mode-btn" onclick="setMode('fog')">
-                    <i class="fa-solid fa-smog" style="color: #a78bfa;"></i>
+                    <i class="fa-solid fa-smog"></i>
                     <div>
                         <strong>Boira de Guerra</strong>
-                        <div style="font-size: 0.75rem; color: #94a3b8;">Només veus on pots moure</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">Visibilitat limitada</div>
                     </div>
                 </button>
                 <button class="mode-btn" onclick="setMode('chaos')">
-                    <i class="fa-solid fa-bolt" style="color: #facc15;"></i>
+                    <i class="fa-solid fa-bolt"></i>
                     <div>
                         <strong>Modi Caos</strong>
-                        <div style="font-size: 0.75rem; color: #94a3b8;">Esdeveniments bojos cada 3 torns</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">Esdeveniments aleatoris</div>
                     </div>
                 </button>
                 <button class="mode-btn" onclick="setMode('blindfold')">
-                    <i class="fa-solid fa-eye-slash" style="color: #f87171;"></i>
+                    <i class="fa-solid fa-eye-slash"></i>
                     <div>
                         <strong>Entrenador a Cegues</strong>
-                        <div style="font-size: 0.75rem; color: #94a3b8;">Peces invisibles per a la teva ment</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">Peces invisibles</div>
                     </div>
                 </button>
                 <button class="mode-btn" onclick="setMode('portal')">
-                    <i class="fa-solid fa-circle-nodes" style="color: #38bdf8;"></i>
+                    <i class="fa-solid fa-circle-nodes"></i>
                     <div>
                         <strong>Portals Quàntics</strong>
-                        <div style="font-size: 0.75rem; color: #94a3b8;">Caselles que et teletransporten</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">Caselles de teletransport</div>
                     </div>
                 </button>
             </div>
 
             <div class="card">
-                <h2><i class="fa-solid fa-robot"></i> Oponents</h2>
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem;">
+                <h2><i class="fa-solid fa-robot"></i> Oponent IA</h2>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; color: var(--text-light);">
                     <input type="checkbox" id="ai-toggle" style="width: 18px; height: 18px;" onchange="toggleAI()">
-                    Jugar contra el Bot (IA)
+                    Activar Bot (IA)
                 </label>
                 <select id="ai-difficulty">
-                    <option value="1">Nivell: Fàcil (Tàctic)</option>
-                    <option value="3" selected>Nivell: Mitjà / Alt (Minimax)</option>
+                    <option value="1">Nivell: Principiant</option>
+                    <option value="3" selected>Nivell: Mestre (Minimax)</option>
                 </select>
             </div>
         </div>
@@ -423,7 +464,7 @@
             </div>
 
             <div class="card" style="flex: 1; display: flex; flex-direction: column;">
-                <h2><i class="fa-solid fa-list-ol"></i> Historial de Moviments</h2>
+                <h2><i class="fa-solid fa-scroll"></i> Historial</h2>
                 <div class="move-history" id="move-history">
                 </div>
             </div>
@@ -438,7 +479,6 @@
 
         const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
 
-        // Positional evaluation tables for smart positioning
         const pawnPST = [
             0,  0,  0,  0,  0,  0,  0,  0,
             50, 50, 50, 50, 50, 50, 50, 50,
@@ -500,7 +540,7 @@
 
             if (mode === 'portal') {
                 setupPortals();
-                showToast("🌀 S'han creat 2 portals quàntics al tauler!");
+                showToast("🌀 Portals quàntics activats!");
             } else {
                 portals = [];
             }
@@ -637,7 +677,7 @@
                 if (!game.get(otherPortal)) {
                     game.remove(move.to);
                     game.put(targetPiece, otherPortal);
-                    showToast(`🌀 Teletransportat de ${move.to} a ${otherPortal}!`);
+                    showToast(`🌀 Teletransportat a ${otherPortal}!`);
                 }
             }
 
@@ -656,23 +696,18 @@
 
         function triggerChaosEvent() {
             const events = [
-                { name: "⚡ Sobrecàrrega!", action: () => showToast("⚡ Totes les peces estan carregades d'energia!") },
+                { name: "⚡ Sobrecàrrega!", action: () => showToast("⚡ Totes les peces estan carregades!") },
                 { name: "🔄 Inversió de Torn!", action: () => {
                     const fen = game.fen().split(' ');
                     fen[1] = fen[1] === 'w' ? 'b' : 'w';
                     game.load(fen.join(' '));
-                    showToast("🔄 El temps s'ha plegat! Torn repetit!");
-                }},
-                { name: "💥 Bomba Atòmica!", action: () => {
-                    showToast("💥 Atenció: Caos total al centre del tauler!");
+                    showToast("🔄 Inversió temporal de torn!");
                 }}
             ];
 
             const ev = events[Math.floor(Math.random() * events.length)];
             ev.action();
         }
-
-        /* --- ADVANCED MINIMAX AI ENGINE --- */
 
         function evaluateBoard(board) {
             let totalEvaluation = 0;
@@ -730,9 +765,8 @@
 
             const depth = parseInt(document.getElementById('ai-difficulty').value) || 3;
             let bestMove = null;
-            let bestValue = Infinity; // Black is minimizing
+            let bestValue = Infinity;
 
-            // Shuffle moves slightly so AI isn't completely deterministic
             moves.sort(() => Math.random() - 0.5);
 
             for (let move of moves) {

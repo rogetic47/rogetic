@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VideoSummarizer AI</title>
+    <title>SummarizerAI - Resum de Vídeos</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -66,7 +66,7 @@
             </div>
         </section>
 
-        <!-- Secció de Resum generat per la IA -->
+        <!-- Secció de Resum -->
         <section class="summary-section">
             <div class="summary-title"><i class="fa-solid fa-file-lines"></i> Esquema i Apunts del Vídeo</div>
             <div class="summary-content" id="summaryOutput">
@@ -83,7 +83,7 @@
             const summaryOutput = document.getElementById('summaryOutput');
             const videoPlayer = document.getElementById('videoPlayer');
 
-            summaryOutput.innerHTML = `<p style="color:var(--accent-purple);"><em><i class="fa-solid fa-spinner fa-spin"></i> Transcribint l'àudio i generant l'esquema interactiu...</em></p>`;
+            summaryOutput.innerHTML = `<p style="color:var(--accent-purple);"><em><i class="fa-solid fa-spinner fa-spin"></i> Analitzant el vídeo i generant l'esquema...</em></p>`;
 
             // Carregar el vídeo al reproductor
             let videoId = extractYouTubeId(input);
@@ -93,13 +93,12 @@
                 videoPlayer.src = `https://www.youtube-nocookie.com/embed/?listType=search&list=${encodeURIComponent(input)}`;
             }
 
-            // Sol·licitud a la IA per analitzar i esquematitzar el contingut
-            const prompt = `Fes un resum professional i un esquema en català per al tema o vídeo: "${input}". 
-            Organitza la resposta amb l'estructura següent:
-            1. Un breu resum executiu (2-3 frases).
-            2. Un esquema de Punts Clau amb minuts ficticis en format [00:00].
-            3. Les conclusions principals en una llista de punts.
-            Utilitza etiquetes HTML com <h3>, <ul>, <li> i <span class='timestamp-tag'> per als minuts.`;
+            const prompt = `Fes un resum i esquema en català per al tema o vídeo: "${input}". 
+            Organitza la resposta així:
+            1. Resum executiu (2-3 frases).
+            2. Punts clau amb minuts ficticis en format [00:00].
+            3. Conclusions principals.
+            Utilitza etiquetes HTML com <h3>, <ul>, <li> i <span class='timestamp-tag'>.`;
 
             const summaryHTML = await fetchAISummary(prompt);
             summaryOutput.innerHTML = summaryHTML;
@@ -111,24 +110,18 @@
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
+        // Nova crida GET gratuïta sense restricció d'API key
         async function fetchAISummary(promptText) {
             try {
-                const response = await fetch('https://text.pollinations.ai/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: [
-                            { role: 'system', content: 'Ets un assistent acadèmic especialitzat a extreure resums i esquemes clars de vídeos informatius.' },
-                            { role: 'user', content: promptText }
-                        ],
-                        model: 'openai'
-                    })
-                });
+                const encodedPrompt = encodeURIComponent(promptText);
+                const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}?model=openai`);
+
+                if (!response.ok) throw new Error("Error en la resposta");
 
                 let text = await response.text();
                 return text;
             } catch (err) {
-                return `<p>Error en generar el resum. Torna-ho a provar.</p>`;
+                return `<p style="color:#ff6b6b;">Hi ha hagut un error en comunicar amb la IA. Torna-ho a provar en uns segons.</p>`;
             }
         }
     </script>

@@ -60,6 +60,8 @@
             align-items: center;
             border-bottom: 2px solid var(--border-wood);
             box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .logo {
@@ -71,6 +73,33 @@
             color: var(--text-gold);
             letter-spacing: 1px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .author-info a {
+            color: var(--accent-gold);
+            text-decoration: none;
+            padding: 4px 8px;
+            border: 1px solid var(--border-wood);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .author-info a:hover {
+            color: var(--accent-gold-hover);
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.15);
         }
 
         .main-container {
@@ -169,7 +198,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* Tauler simètric i amb mida fixa de caselles */
         .board-wrapper {
             position: relative;
             width: 560px;
@@ -387,8 +415,14 @@
             <i class="fa-solid fa-chess-king"></i>
             <span>Rogetic Chess Lab</span>
         </div>
-        <div style="color: var(--text-dim); font-size: 0.9rem; font-style: italic;">
-            Taulell clàssic d'alta precisió
+        <div class="author-info">
+            <span>Creat per <strong>Roger Márquez Sabaté</strong></span>
+            <a href="https://ratings.fide.com/profile/94769117" target="_blank" rel="noopener">
+                <i class="fa-solid fa-trophy"></i> Perfil Elo FIDE
+            </a>
+            <a href="https://www.escacs.cat/" target="_blank" rel="noopener">
+                <i class="fa-solid fa-chess-pawn"></i> Elo Català (FCE)
+            </a>
         </div>
     </header>
 
@@ -677,7 +711,6 @@
         }
 
         function onMoveExecuted(move) {
-            // Lògica de Teletransport de Portals
             if (currentMode === 'portal' && portals.includes(move.to)) {
                 const destination = portals[0] === move.to ? portals[1] : portals[0];
                 const movingPiece = game.get(move.to);

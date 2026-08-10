@@ -8,10 +8,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chess.js & Chessboard.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
 
     <style>
         :root {
@@ -49,7 +49,6 @@
             overflow: hidden;
         }
 
-        /* HEADER / NAVBAR */
         header {
             background: rgba(22, 18, 14, 0.95);
             backdrop-filter: blur(12px);
@@ -112,7 +111,6 @@
             background: var(--accent-gold);
         }
 
-        /* MAIN APP LAYOUT */
         .app-container {
             display: flex;
             flex: 1;
@@ -120,7 +118,6 @@
             overflow: hidden;
         }
 
-        /* LEFT SIDEBAR: TOPICS & PROMPTS */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--bg-card);
@@ -198,7 +195,6 @@
             border-color: var(--accent-gold);
         }
 
-        /* CHAT CENTER AREA */
         .chat-container {
             flex: 1;
             display: flex;
@@ -280,7 +276,6 @@
             margin-bottom: 0;
         }
 
-        /* CARD EMBEDS DINS DEL CHAT */
         .chess-card-embed {
             background: var(--bg-card);
             border: 1px solid var(--accent-gold);
@@ -335,7 +330,6 @@
             color: #000;
         }
 
-        /* INPUT BAR */
         .chat-input-area {
             padding: 1.2rem 1.8rem;
             background: var(--bg-card);
@@ -384,7 +378,6 @@
             transform: scale(1.03);
         }
 
-        /* RIGHT PANEL: INTERACTIVE CHESSBOARD */
         .interactive-panel {
             width: 380px;
             background: var(--bg-card);
@@ -445,7 +438,6 @@
             word-break: break-all;
         }
 
-        /* RESPONSIVE DESIGN */
         @media (max-width: 1100px) {
             .interactive-panel { display: none; }
         }
@@ -465,7 +457,7 @@
             <span>Grandmaster AI</span>
         </a>
         <div class="author-badge">
-            <span>Desenvolupat per <strong>Roger Márquez Sabatés</strong></span>
+            <span>Desenvolupat per <strong>Roger Márquez Sabaté</strong></span>
             <a href="https://ratings.fide.com/profile/94769117" target="_blank" rel="noopener">
                 <i class="fa-solid fa-trophy"></i> FIDE
             </a>
@@ -476,7 +468,6 @@
     </header>
 
     <div class="app-container">
-        <!-- LEFT SIDEBAR -->
         <aside class="sidebar">
             <div>
                 <div class="section-title"><i class="fa-solid fa-book-open"></i> Temes d'Escacs</div>
@@ -511,15 +502,15 @@
             </div>
 
             <div>
-                <div class="section-title"><i class="fa-solid fa-lightbulb"></i> Exemples Rapid</div>
-                <button class="topic-btn" onclick="sendPrompt('Explica'm la Defensa Siciliana Variant Najdorf i dona'm el PGN')">
+                <div class="section-title"><i class="fa-solid fa-lightbulb"></i> Exemples Ràpids</div>
+                <button class="topic-btn" onclick="sendPrompt('Explica la Defensa Siciliana Variant Najdorf i dona el PGN')">
                     <i class="fa-solid fa-play"></i> Najdorf en la Siciliana
                 </button>
                 <button class="topic-btn" onclick="sendPrompt('Què és la posició de Lucena en els finals de torres?')">
                     <i class="fa-solid fa-play"></i> Posició de Lucena
                 </button>
-                <button class="topic-btn" onclick="sendPrompt('Dona'm un PGN d'una partida famosa de Kasparov')">
-                    <i class="fa-solid fa-play"></i> Partida Im immortal
+                <button class="topic-btn" onclick="sendPrompt('Dona un PGN d’una partida famosa de Kasparov')">
+                    <i class="fa-solid fa-play"></i> Partida Immortal
                 </button>
             </div>
 
@@ -530,10 +521,8 @@
             </div>
         </aside>
 
-        <!-- CENTER CHAT AREA -->
         <main class="chat-container">
             <div class="chat-messages" id="chatMessages">
-                <!-- Welcome Message -->
                 <div class="message ai">
                     <div class="avatar"><i class="fa-solid fa-robot"></i></div>
                     <div class="msg-content">
@@ -552,7 +541,6 @@
             </div>
         </main>
 
-        <!-- RIGHT PANEL: CHESSBOARD -->
         <aside class="interactive-panel">
             <div class="section-title"><i class="fa-solid fa-chess-board"></i> Tauler d'Anàlisi</div>
             <div class="board-container" id="board"></div>
@@ -564,18 +552,18 @@
                 <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">FEN Actual:</div>
                 <div class="fen-box" id="fenDisplay">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1</div>
             </div>
-        </div>
+        </aside>
     </div>
 
     <script>
         let board = null;
         let game = new Chess();
 
-        // Inicialitzar Tauler
         $(document).ready(function() {
             board = Chessboard('board', {
                 position: 'start',
                 draggable: true,
+                pieceTheme: 'https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/img/chesspieces/wikipedia/{piece}.png',
                 onDrop: handleMove
             });
             updateFenDisplay();
@@ -607,13 +595,12 @@
         }
 
         function loadFenToBoard(fen) {
-            if(game.load(fen)) {
+            if (game.load(fen)) {
                 board.position(fen);
                 updateFenDisplay();
             }
         }
 
-        // CONTROL DE CHAT I IA
         function handleKeyDown(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -623,10 +610,10 @@
 
         function askTopic(topic) {
             const prompts = {
-                'obertures': 'Explica'm el concepte principal de les obertures d'escacs, la diferència entre obertures obertes i tancades, i dona'm un PGN d'exemple.',
-                'finals': 'Com s'han de jugar els finals de peons i torres? Explica'm la regla del quadrat i la posició de Philidor.',
-                'zugzwang': 'Què és exactament el Zugzwang en escacs? Dona'm un exemple clàssic on un jugador estigui obligat a perdre per haver de moure.',
-                'contingut': 'Quins són els millors llibres, canals de YouTube i plataformes d'escacs per millorar el meu nivell?'
+                'obertures': 'Explica el concepte principal de les obertures d’escacs, la diferència entre obertures obertes i tancades, i dona un PGN d’exemple.',
+                'finals': 'Com s’han de jugar els finals de peons i torres? Explica la regla del quadrat i la posició de Philidor.',
+                'zugzwang': 'Què és exactament el Zugzwang en escacs? Dona un exemple clàssic on un jugador estigui obligat a perdre per haver de moure.',
+                'contingut': 'Quins són els millors llibres, canals de YouTube i plataformes d’escacs per millorar el meu nivell?'
             };
             sendPrompt(prompts[topic]);
         }
@@ -641,22 +628,16 @@
             const text = input.value.trim();
             if (!text) return;
 
-            // Afegir missatge d'usuari
             appendMessage('user', text);
             input.value = '';
 
-            // Mostrar indicador de processament
             const loadingId = appendLoadingMessage();
-
-            // Resposta de la IA
             const apiKey = localStorage.getItem('chess_ai_apikey');
             let responseText = "";
 
             if (apiKey) {
-                // Si l'usuari ha introduït la seva clau d'OpenAI
                 responseText = await fetchOpenAIResponse(text, apiKey);
             } else {
-                // Respostes simulades de Gran Mestre en cas de no tenir API key
                 responseText = generateSimulatedResponse(text);
             }
 
@@ -668,9 +649,8 @@
             const chatMessages = document.getElementById('chatMessages');
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${sender}`;
-
             const avatarIcon = sender === 'user' ? 'fa-user' : 'fa-robot';
-            
+
             msgDiv.innerHTML = `
                 <div class="avatar"><i class="fa-solid ${avatarIcon}"></i></div>
                 <div class="msg-content">${content}</div>
@@ -708,7 +688,6 @@
             }
         }
 
-        // BASE DE CONEIXEMENT DE L'IA (MODE SIMULAT AMB ALTA QUALITAT EN CATALÀ)
         function generateSimulatedResponse(prompt) {
             const p = prompt.toLowerCase();
 
@@ -773,19 +752,17 @@
                 `;
             }
 
-            // Resposta general per defecte
             return `
                 <p>Molt bona pregunta sobre escacs! Com a IA de Gran Mestre, puc analitzar aquesta posició o concepte des d'un punt de vista estratègic i tàctic.</p>
                 <p>En el joc modern, la combinació de càlcul de variants i la compressió de l'estructura de peons és clau. Si vols aprofundir en una línia concreta, em pots demanar:</p>
                 <ul>
                     <li>El <strong>PGN de partides model</strong>.</li>
-                    <li>L'explicació pas a pas de la <strong>estratègia de mig joc</strong>.</li>
+                    <li>L'explicació pas a pas de l'<strong>estratègia de mig joc</strong>.</li>
                     <li>Com jugar la posició en el <strong>tauler d'anàlisi</strong> de la dreta.</li>
                 </ul>
             `;
         }
 
-        // Connexió real a OpenAI si hi ha API Key
         async function fetchOpenAIResponse(userPrompt, apiKey) {
             try {
                 const response = await fetch("https://api.openai.com/v1/chat/completions", {
